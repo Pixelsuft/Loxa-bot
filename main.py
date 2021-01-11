@@ -5,6 +5,7 @@ print('Starting Loxa Bot...')
 from os import environ as env
 from os import name as os_type
 from os import system as cmd_run
+from os import listdir as scan_dir
 from colorama import init as colorama_init
 from colorama import Back, Fore, Style
 from ctypes import windll as windows_dll
@@ -15,6 +16,7 @@ from discord import Status as discord_status
 from discord import Game as discord_game
 from discord import File as discord_file
 from discord import Embed as discord_embed
+from discord import channel as discord_channel
 from subprocess import check_output as cmd_run_with_log
 from io import BytesIO
 from PIL import Image as pillow_image
@@ -63,8 +65,8 @@ except KeyError:
 
 
 #main code starts
-client = commands.Bot( command_prefix = prefix )
-client.remove_command( 'help' )
+client = commands.Bot(command_prefix = prefix)
+client.remove_command('help')
 
 
 @client.event
@@ -148,41 +150,35 @@ async def imaginer(ctx,*,args_str):
             await ctx.send('Ширина: '+str(img_width)+'\nВысота: '+str(img_height))
         except:
             await ctx.send(error_text)
-    elif args[0]=='show' or args[0]=='show_png':
+    elif args[0]=='random':
+        scanned=scan_dir('random_img')
+        randomed='random_img\\'+scanned[random(0,len(scanned)-1)]
+    elif args[0]=='show':
         with BytesIO() as output:
             try:
-                user_images[str(ctx.message.author.id)].save(output, format="PNG")
+                user_images[str(ctx.message.author.id)].save(output, format=args[1].upper())
                 output.seek(0)
                 contents = output.getvalue()
-                await ctx.message.channel.send(file=discord_file(fp=output, filename='zalupa.png'))
+                await ctx.message.channel.send(file=discord_file(fp=output, filename='zalupa.'+args[1]))
             except:
-                await ctx.send(error_text+': Файл не найден')
-    elif args[0]=='show_jpeg':
-        with BytesIO() as output:
-            try:
-                user_images[str(ctx.message.author.id)].save(output, format="JPEG")
-                output.seek(0)
-                contents = output.getvalue()
-                await ctx.message.channel.send(file=discord_file(fp=output, filename='zalupa.jpeg'))
-            except:
-                await ctx.send(error_text+': Файл не найден')
+                await ctx.send(error_text+': Ошибка')
     elif args[0]=='help':
         try:
             if args[1]=='crop':
-                await ctx.send('!!imaginer crop X1 Y1 X2 Y2')
+                await ctx.send(prefix+'imaginer crop X1 Y1 X2 Y2')
             elif args[1]=='rotate':
-                await ctx.send('!!imaginer rotate ГРАДУС')
+                await ctx.send(prefix+'imaginer rotate ГРАДУС')
             elif args[1]=='filter':
-                await ctx.send('''
-                !!imaginer filter ФИЛЬТР
+                await ctx.send(prefix+'''imaginer filter ФИЛЬТР
                 Фильтры:
                 BLUR BoxBlur BuiltinFilter CONTOUR Color3DLUT DETAIL EDGE_ENHANCE EDGE_ENHANCE_MORE EMBOSS FIND_EDGES Filter GaussianBlur Kernel MaxFilter MedianFilter MinFilter ModeFilter MultibandFilter RankFilter SHARPEN SMOOTH SMOOTH_MORE UnsharpMask
                 ''')
             elif args[1]=='resize':
-                await ctx.send('!!imaginer resize ШИРИНА ВЫСОТА')
+                await ctx.send(prefix+'imaginer resize ШИРИНА ВЫСОТА')
+            elif args[1]=='show':
+                await ctx.send(prefix+'imaginer show ФОРМАТ')
             elif args[1]=='convert':
-                await ctx.send('''
-                !!imaginer convert РЕЖИМ
+                await ctx.send(prefix+'''imaginer convert РЕЖИМ
                 Режимы:
                 1 (1-bit pixels, black and white, stored with one pixel per byte)
                 L (8-bit pixels, black and white)
