@@ -76,7 +76,7 @@ client = commands.Bot(command_prefix = prefix)
 client.remove_command('help')
 
 
-colours_rainbow = [0x00ff00,discord_color.dark_orange(),discord_color.orange(),discord_color.dark_gold(),discord_color.gold(),discord_color.dark_magenta(),discord_color.magenta(),discord_color.red(),discord_color.dark_red(),discord_color.blue(),discord_color.dark_blue(),discord_color.teal(),discord_color.dark_teal(),discord_color.green(),discord_color.dark_green(),discord_color.purple(),discord_color.dark_purple()]
+colours_rainbow = [0x00ff00,0xff0000,0x0000ff,0xffff00,0xffffff,0x000000,0xff00ff,0x00ffff,discord_color.dark_orange(),discord_color.orange(),discord_color.dark_gold(),discord_color.gold(),discord_color.dark_magenta(),discord_color.magenta(),discord_color.red(),discord_color.dark_red(),discord_color.blue(),discord_color.dark_blue(),discord_color.teal(),discord_color.dark_teal(),discord_color.green(),discord_color.dark_green(),discord_color.purple(),discord_color.dark_purple()]
 serverid_rainbow = 753488286978277389
 rainbowrolename = "Наркоман"
 rainbow_delay=5
@@ -165,76 +165,119 @@ async def log_cmd(ctx, encode, *, command_to_run):
 
 
 @client.command(pass_context=True)
-async def string(ctx, *, args_str):
+async def stringer(ctx, *, args_str):
     cmd=args_str.split(' ')
-    if cmd[0]=='old_rsplit':
-        full=''
-        for i in range(len(cmd)):
-            if not i==0:
-                if not full=='':
-                    full+=' '
-                full+=cmd[i]
-        for i in full:
-            await ctx.send(i)
-    elif cmd[0]=='rsplit':
-        full=''
-        fuller=''
-        for i in range(len(cmd)):
-            if not i==0:
-                if not full=='':
-                    full+=' '
-                full+=cmd[i]
-        for i in full:
-            if not fuller=='':
-                fuller+='\n'
-            fuller+=i
-        await ctx.send(fuller)
-    elif cmd[0]=='old_split':
-        full=''
-        for i in range(len(cmd)):
-            if not i==0 and not i==1:
-                if not full=='':
-                    full+=' '
-                full+=cmd[i]
-        for i in full.split(cmd[1]):
-            await ctx.send(i)
-    elif cmd[0]=='split':
-        full=''
-        fuller=''
-        for i in range(len(cmd)):
-            if not i==0 and not i==1:
-                if not full=='':
-                    full+=' '
-                full+=cmd[i]
-        for i in full.split(cmd[1]):
-            if not fuller=='':
-                fuller+='\n'
-            fuller+=i
-        await ctx.send(fuller)
-    elif cmd[0]=='reverse':
-        full=''
-        for i in range(len(cmd)):
-            if not i==0:
-                if not full=='':
-                    full+=' '
-                full+=cmd[i]
-        await ctx.send(full[::-1])
-    elif cmd[0]=='random_choice_space':
-        full=''
-        for i in range(len(cmd)):
-            if not i==0:
-                if not full=='':
-                    full+=' '
-                full+=cmd[i]
-        await ctx.send(str(random_choice(full.split(' '))))
-    elif cmd[0]=='random_choice':
-        full=''
-        for i in range(len(cmd)):
-            if not i==0:
-                if not full=='':
-                    full+=' '
-                full+=cmd[i]
-        await ctx.send(str(random_choice(full)))
+    if len(cmd)>0:
+        if cmd[0]=='old_rsplit':
+            full=''
+            for i in range(len(cmd)):
+                if not i==0:
+                    if not full=='':
+                        full+=' '
+                    full+=cmd[i]
+            for i in full:
+                await ctx.send(i)
+        elif cmd[0]=='rsplit':
+            full=''
+            fuller=''
+            for i in range(len(cmd)):
+                if not i==0:
+                    if not full=='':
+                        full+=' '
+                    full+=cmd[i]
+            for i in full:
+                if not fuller=='':
+                    fuller+='\n'
+                fuller+=i
+            await ctx.send(fuller)
+        elif cmd[0]=='old_split':
+            full=''
+            for i in range(len(cmd)):
+                if not i==0 and not i==1:
+                    if not full=='':
+                        full+=' '
+                    full+=cmd[i]
+            for i in full.split(cmd[1]):
+                await ctx.send(i)
+        elif cmd[0]=='split':
+            full=''
+            fuller=''
+            for i in range(len(cmd)):
+                if not i==0 and not i==1:
+                    if not full=='':
+                        full+=' '
+                    full+=cmd[i]
+            for i in full.split(cmd[1]):
+                if not fuller=='':
+                    fuller+='\n'
+                fuller+=i
+            await ctx.send(fuller)
+        elif cmd[0]=='replace':
+            full=''
+            fuller=''
+            for i in range(len(cmd)):
+                if not i==0 and not i==1 and not i==2:
+                    if not full=='':
+                        full+=' '
+                    full+=cmd[i]
+            fuller=full.replace(cmd[1],cmd[2])
+            await ctx.send(fuller)
+        elif cmd[0]=='reverse':
+            full=''
+            for i in range(len(cmd)):
+                if not i==0:
+                    if not full=='':
+                        full+=' '
+                    full+=cmd[i]
+            await ctx.send(full[::-1])
+        elif cmd[0]=='random_choice_space':
+            full=''
+            for i in range(len(cmd)):
+                if not i==0:
+                    if not full=='':
+                        full+=' '
+                    full+=cmd[i]
+            await ctx.send(str(random_choice(full.split(' '))))
+        elif cmd[0]=='random_choice':
+            full=''
+            for i in range(len(cmd)):
+                if not i==0:
+                    if not full=='':
+                        full+=' '
+                    full+=cmd[i]
+            await ctx.send(str(random_choice(full)))
+        elif cmd[0]=='help':
+            try:
+                if cmd[1]=='rsplit':
+                    await ctx.send(prefix+'stringer rsplit СТРОКА')
+                elif cmd[1]=='old_rsplit':
+                    await ctx.send(prefix+'stringer old_rsplit СТРОКА')
+                elif cmd[1]=='rsplit':
+                    await ctx.send(prefix+'stringer split СИМВОЛ СТРОКА')
+                elif cmd[1]=='old_rsplit':
+                    await ctx.send(prefix+'stringer old_split СИМВОЛ СТРОКА')
+                elif cmd[1]=='reverse':
+                    await ctx.send(prefix+'stringer reverse СТРОКА')
+                elif cmd[1]=='random_choice':
+                    await ctx.send(prefix+'stringer random_choice СТРОКА')
+                elif cmd[1]=='random_choice_space':
+                    await ctx.send(prefix+'stringer random_choice_space СТРОКА')
+                elif cmd[1]=='replace':
+                    await ctx.send(prefix+'stringer replace СИМВОЛ СИМВОЛ СТРОКА')
+            except:
+                emb = discord_embed(title = 'Помощь по Stringer ('+str(prefix)+'stringer КОМАНДА)',color = random_choice(colours_rainbow))
+                emb.add_field(name='help', value = "Открытие этой подсказки")
+                emb.add_field(name='rsplit', value = "Разбитие текста на символы")
+                emb.add_field(name='old_rsplit', value = "Разбитие текста на символы и отправка разными сообщениями")
+                emb.add_field(name='split', value = "Разбитие текста на символы с помощью разделяющих символов")
+                emb.add_field(name='old_split', value = "Разбитие текста на символы с помощью разделяющих символов и отправка разными сообщениями")
+                emb.add_field(name='reverse', value = "Повернуть изображение")
+                emb.add_field(name='replace', value = "Заменить символы в строке")
+                emb.add_field(name='random_choice', value = "Рандомный выбор символа")
+                emb.add_field(name='random_choice_space', value = "Рандомный выбор части строки, разделённой пробелом")
+                await ctx.send(embed = emb)
+    else:
+        await ctx.send('Наберите '+str(prefix)+'stringer help для большей информации!')
 
 
 
