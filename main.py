@@ -16,6 +16,7 @@ from discord import Status as discord_status
 from discord import Game as discord_game
 from discord import File as discord_file
 from discord import Embed as discord_embed
+from discord import Member as discord_member
 from discord import channel as discord_channel
 from discord import Color as discord_color
 from subprocess import check_output as cmd_run_with_log
@@ -25,6 +26,10 @@ from PIL import ImageFilter as pillow_filter
 from requests import get as request_get
 from asyncio import sleep as async_time_sleep
 from time import monotonic as time_monotonic
+from math import pi as math_pi
+
+
+english_alphabet=['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
 
 
 #set up
@@ -32,11 +37,12 @@ back_no_fore=False #log, Error, Warning colors to back or fore?
 prefix='!!'
 error_text='ашипка404'
 author_mention='<@!451310273438023681>'
-bot_mention='<@!775611736703238144>'
+bot_mention='<@775611736703238144>'
 user_images={}
 troll_delete=False
+troll_delete_troll=False
 enable_rainbow=True
-loha_chat=['lox', 'loxa', 'лох', 'лоха', 'лохабот', 'боталох', 'loxabot', 'loxa_bot', 'loxa-bot', 'лох!', 'лоха!']
+loha_chat=['lox', 'loxa', 'лох', 'лоха', 'лохабот', 'лошара','боталох','ботолох', 'loxabot', 'loxa_bot', 'loxa-bot', 'лох!', 'лоха!']
 ctrl_c_is_exit=True
 game_status='Loxa Bot | '+str(prefix)+'help'
 if os_type=='nt': #Only if os is windows
@@ -79,7 +85,10 @@ client.remove_command('help')
 colours_rainbow = [0x00ff00,0xff0000,0x0000ff,0xffff00,0xffffff,0x000000,0xff00ff,0x00ffff,discord_color.dark_orange(),discord_color.orange(),discord_color.dark_gold(),discord_color.gold(),discord_color.dark_magenta(),discord_color.magenta(),discord_color.red(),discord_color.dark_red(),discord_color.blue(),discord_color.dark_blue(),discord_color.teal(),discord_color.dark_teal(),discord_color.green(),discord_color.dark_green(),discord_color.purple(),discord_color.dark_purple()]
 serverid_rainbow = 753488286978277389
 rainbowrolename = "Наркоман"
-rainbow_delay=5
+rainbow_delay=15
+admin_block_words=['Пшёл нахер', 'Лошара', 'А хер тебе с маслом, author!','author это блять не для тебя!']
+troll_block_words=['Пшёл нахер', 'Лошара', 'А хер тебе с маслом, author!','author кабздец не повезло, я щас троллю сервера!','Лох, неудачник!']
+say_hello_words=['Привет, author, я Лоха Бот!', 'Дарова author!', 'Драстьте', 'Пока!']
 
 
 async def rainbowrole(role):
@@ -115,12 +124,14 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    if not message.author.mention==bot_mention:
+    ctx = await client.get_context(message)
+    if not message.author.mention==bot_mention.replace('!',''):
         if troll_delete==True:
             if not message.author.mention==author_mention:
                 await message.delete()
+                if troll_delete_troll==True:
+                    await ctx.send(str(random_choice(troll_block_words)).replace('author',ctx.message.author.mention))
         else:
-            ctx = await client.get_context(message)
             split_cmd=message.content.lower().replace('!','').replace('?','').replace(',','').split(' ')
             if split_cmd[0].lower() in loha_chat:
                 if len(split_cmd)<=1:
@@ -134,7 +145,7 @@ async def on_message(message):
                         else:
                             if i in hello_words:
                                 entered=True
-                                await ctx.send('Привет тебе, '+message.author.mention+'!')
+                                await ctx.send(str(random_choice(say_hello_words)).replace('author',message.author.mention))
         await client.process_commands(message)
 
 
@@ -148,7 +159,15 @@ async def run_cmd(ctx, *, command_to_run):
             result=error_text
         await ctx.send(result)
     else:
-        await ctx.send('А хер тебе с маслом!')
+        await ctx.send(str(random_choice(admin_block_words)).replace('author',ctx.message.author.mention))
+
+
+@client.command(pass_context=True)
+async def nick(ctx, member: discord_member, *, nick): #Temp Function for admin
+    if ctx.message.author.mention==author_mention:
+        await member.edit(nick=nick)
+    else:
+        await ctx.send(str(random_choice(admin_block_words)).replace('author',ctx.message.author.mention))
 
 
 @client.command(pass_context=True) # Only for creator
@@ -161,8 +180,42 @@ async def log_cmd(ctx, encode, *, command_to_run):
             result=error_text
         await ctx.send(result)
     else:
-        await ctx.send('А хер тебе с маслом!')
+        await ctx.send(str(random_choice(admin_block_words)).replace('author',ctx.message.author.mention))
 
+@client.command(pass_context=True)
+async def mather(ctx, *, args_str):
+    cmd=args_str.split(' ')
+    if len(cmd)>0:
+        if cmd[0]=='eval':
+            full=''
+            for i in range(len(cmd)):
+                if not i==0:
+                    if not full=='':
+                        full+=' '
+                    full+=cmd[i]
+            full=full.lower().replace('pi',str(math_pi)).replace(':','/').replace('•','*')
+            for i in english_alphabet:
+                full=full.replace(i,'')
+            await ctx.send(eval(str(full)))
+        elif cmd[0]=='random':
+            await ctx.send(str(random_int(int(cmd[1]),int(cmd[2]))))
+        elif cmd[0]=='pi':
+            await ctx.send(str(math_pi))
+        elif cmd[0]=='help':
+            try:
+                if cmd[1]=='eval':
+                    await ctx.send(prefix+'mather eval ПРИМЕР')
+                elif cmd[1]=='random':
+                    await ctx.send(prefix+'mather random ОТ ДО')
+            except:
+                emb = discord_embed(title = 'Помощь по Stringer ('+str(prefix)+'stringer КОМАНДА)',color = random_choice(colours_rainbow))
+                emb.add_field(name='help', value = "Открытие этой подсказки")
+                emb.add_field(name='eval', value = "Решение примера")
+                emb.add_field(name='random', value = "Случайное число")
+                emb.add_field(name='pi', value = "Число ПИ")
+                await ctx.send(embed = emb)
+    else:
+        await ctx.send('Наберите '+str(prefix)+'stringer help для большей информации!')
 
 @client.command(pass_context=True)
 async def stringer(ctx, *, args_str):
@@ -282,15 +335,20 @@ async def stringer(ctx, *, args_str):
 
 
 @client.command(pass_context=True) # Only for creator
-async def troll_delete(ctx):
+async def troll_delete(ctx, can_draz):
     if ctx.message.author.mention==author_mention:
         global troll_delete
+        global troll_delete_troll
+        if can_draz=='true':
+            troll_delete_troll=True
+        else:
+            troll_delete_troll=False
         if troll_delete==True:
             troll_delete=False
         else:
             troll_delete=True
     else:
-        await ctx.send('А хер тебе с маслом!')
+        await ctx.send(str(random_choice(admin_block_words)).replace('author',ctx.message.author.mention))
 
 
 @client.command(pass_context=True) # Only for creator
@@ -312,7 +370,7 @@ async def set_status(ctx, status_type, *, game_status):
             new_status=discord_status.try_value
         await client.change_presence(status = new_status, activity = discord_game(game_status))
     else:
-        await ctx.send('А хер тебе с маслом!')
+        await ctx.send(str(random_choice(admin_block_words)).replace('author',ctx.message.author.mention))
 
 
 @client.command(pass_context=True)
@@ -326,8 +384,8 @@ async def ping(ctx):
 @client.command(pass_content=True)
 async def imaginer(ctx,*,args_str):
     args=args_str.split(' ')
-    await ctx.send('PixelSuft imaginer v1.0')
-    if len(args)>1:
+    #await ctx.send('PixelSuft imaginer v1.0')
+    if len(args)>0:
         if args[0]=='open':
             if not ctx.message.attachments:
                 await ctx.send(error_text+': Не прикреплён файл!')
@@ -435,6 +493,6 @@ if __name__=='__main__':
             client.run(discord_bot_token)
             break #This is not Ctrl+C, break while
         except KeyboardInterrupt: #Ctrl+C now restart app
-            print('\n')
+            print('\n\n', end='')
             if ctrl_c_is_exit==True:
                 break  #Ctrl+C now close app
