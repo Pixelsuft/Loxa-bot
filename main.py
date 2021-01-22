@@ -36,8 +36,8 @@ english_alphabet=['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p
 back_no_fore=False #log, Error, Warning colors to back or fore?
 prefix='!!'
 error_text='ашипка404'
-author_mention='<@!451310273438023681>'
-bot_mention='<@775611736703238144>'
+author_id=451310273438023681
+bot_id=775611736703238144
 user_images={}
 troll_delete=False
 troll_delete_troll=False
@@ -125,9 +125,9 @@ async def on_ready():
 @client.event
 async def on_message(message):
     ctx = await client.get_context(message)
-    if not message.author.mention==bot_mention.replace('!',''):
+    if not message.author.id==bot_id:
         if troll_delete==True:
-            if not message.author.mention==author_mention:
+            if not message.author.id==author_id:
                 await message.delete()
                 if troll_delete_troll==True:
                     await ctx.send(str(random_choice(troll_block_words)).replace('author',ctx.message.author.mention))
@@ -151,7 +151,7 @@ async def on_message(message):
 
 @client.command(pass_context=True) # Only for creator
 async def run_cmd(ctx, *, command_to_run):
-    if ctx.message.author.mention==author_mention:
+    if ctx.message.author.id==author_id:
         result=''
         try:
             result=cmd_run(command_to_run)
@@ -164,7 +164,7 @@ async def run_cmd(ctx, *, command_to_run):
 
 @client.command(pass_context=True)
 async def nick(ctx, member: discord_member, *, nick): #Temp Function for admin
-    if ctx.message.author.mention==author_mention:
+    if ctx.message.author.id==author_id:
         await member.edit(nick=nick)
     else:
         await ctx.send(str(random_choice(admin_block_words)).replace('author',ctx.message.author.mention))
@@ -172,7 +172,7 @@ async def nick(ctx, member: discord_member, *, nick): #Temp Function for admin
 
 @client.command(pass_context=True) # Only for creator
 async def log_cmd(ctx, encode, *, command_to_run):
-    if ctx.message.author.mention==author_mention:
+    if ctx.message.author.id==author_id:
         result=''
         try:
             result=cmd_run_with_log(command_to_run, shell=True, encoding=encode)
@@ -336,7 +336,7 @@ async def stringer(ctx, *, args_str):
 
 @client.command(pass_context=True) # Only for creator
 async def troll_delete(ctx, can_draz):
-    if ctx.message.author.mention==author_mention:
+    if ctx.message.author.id==author_id:
         global troll_delete
         global troll_delete_troll
         if can_draz=='true':
@@ -353,7 +353,7 @@ async def troll_delete(ctx, can_draz):
 
 @client.command(pass_context=True) # Only for creator
 async def set_status(ctx, status_type, *, game_status):
-    if ctx.message.author.mention==author_mention:
+    if ctx.message.author.id==author_id:
         game_status=game_status
         new_status=discord_status.online
         if status_type=='dnd':
