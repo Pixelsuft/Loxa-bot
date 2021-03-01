@@ -155,9 +155,10 @@ async def on_message(message):
     if not message.author.id == bot_id:
         if troll_delete:
             if not message.author.id == author_id:
-                await message.delete()
-                if troll_delete_troll:
-                    await ctx.send(str(random_choice(troll_block_words)).replace('author', ctx.message.author.mention))
+                pass
+                # await message.delete()
+                # if troll_delete_troll:
+                #     await ctx.send(str(random_choice(troll_block_words)).replace('author', ctx.message.author.mention))
         else:
             split_cmd = message.content.lower().replace('!', '').replace('?', '').replace(',', '').split(' ')
             if split_cmd[0].lower() in loha_chat:
@@ -195,7 +196,13 @@ async def weather(ctx, *, city):
     try:
         await ctx.send(str(owm.weather_at_place(city).weather.temperature('celsius')['temp']))
     except ErrorWeather:
-        await ctx.send(f'Место {city} не найдено!')
+        temp_city = city.replace(' ', '').replace('\n', '').lower()
+        if temp_city == 'мухосранск' or temp_city == 'мухосраново':
+            await ctx.send('В мухосраново муха засраново!')
+        elif 'мух' in temp_city and 'сра' in temp_city:
+            await ctx.send(f'Место {city} не найдено!\nВозможно, вы имели ввиду Мухосранск?')
+        else:
+            await ctx.send(f'Место {city} не найдено!')
 
 
 @client.command(pass_context=True)
